@@ -12,8 +12,6 @@ const sql = require('mssql');
 /* GET home page. */
 router.get('/', function(req, res, next) {
 
-    res.set('Content-Type', 'application/json');
-
     var connection = new Connection(db);
     
     connection.on('connect', function(err) {
