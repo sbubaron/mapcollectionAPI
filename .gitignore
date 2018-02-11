@@ -61,4 +61,4 @@ typings/
 .next
 
 
-config.js
+config.local.js
