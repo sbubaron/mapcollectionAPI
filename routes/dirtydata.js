@@ -2,15 +2,13 @@ var express = require('express');
 var router = express.Router();
 var Connection = require('tedious').Connection;
 var Request = require('tedious').Request;
-var config = require("../config");
+var config = require("../config.local");
 var db = config.database;
 
 
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-
-    res.set('Content-Type', 'application/json');
 
     var connection = new Connection(db);
     
