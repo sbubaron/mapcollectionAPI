@@ -7,7 +7,7 @@ var config = require("../config.local");
 var db = config.database;
 
 const sql = require('mssql');
-
+const connectionString = process.env.SQLCONNSTR_connectionParams;
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
 
@@ -69,7 +69,9 @@ router.get('/', function(req, res, next) {
     query += " OFFSET " + offset + " ROWS";
     query += " FETCH NEXT " + pageSize + " ROWS ONLY";
 
-    sql.connect(config.mssql).then(pool => {
+    //sql.connect(config.mssql).then(pool => {
+	sql.connect(connectionString).then(pool => {
+	
         // Query
      
         return pool.request()
@@ -97,7 +99,8 @@ router.get('/data.csv', function(req, res, next) {
     console.log("using mssql");
     console.log(config.mssql);
     res.set('Content-Type', 'application/octet-stream');
-    sql.connect(config.mssql).then(pool => {
+    //sql.connect(config.mssql).then(pool => {
+	sql.connect(connectionString).then(pool => {
         // Query
      
         return pool.request().query('select top 100000 * from dirtydatacsv');
@@ -129,7 +132,8 @@ router.get('/:trackingnumber', function(req, res, next) {
 
     
 
-    sql.connect(config.mssql).then(pool => {
+    //sql.connect(config.mssql).then(pool => {
+	sql.connect(connectionString).then(pool => {	
         // Query
      
         return pool.request()
