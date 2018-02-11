@@ -7,9 +7,10 @@ var config = require("../config.local");
 var db = config.database;
 
 const sql = require('mssql');
-const connectionString = process.env.SQLCONNSTR_connectionParams;
+const connectionString = process.env.SQLCONNSTR_connectionParams || '';
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
+var sqlConObj = connectionString || config.mssql;
 
 const csvStringifier  = createCsvStringifier({
     path: 'path/to/file.csv',
@@ -69,8 +70,10 @@ router.get('/', function(req, res, next) {
     query += " OFFSET " + offset + " ROWS";
     query += " FETCH NEXT " + pageSize + " ROWS ONLY";
 
+    
+
     //sql.connect(config.mssql).then(pool => {
-	sql.connect(connectionString).then(pool => {
+	sql.connect(sqlConObj).then(pool => {
 	
         // Query
      
@@ -100,7 +103,7 @@ router.get('/data.csv', function(req, res, next) {
     console.log(config.mssql);
     res.set('Content-Type', 'application/octet-stream');
     //sql.connect(config.mssql).then(pool => {
-	sql.connect(connectionString).then(pool => {
+	sql.connect(sqlConObj).then(pool => {
         // Query
      
         return pool.request().query('select top 100000 * from dirtydatacsv');
@@ -133,7 +136,7 @@ router.get('/:trackingnumber', function(req, res, next) {
     
 
     //sql.connect(config.mssql).then(pool => {
-	sql.connect(connectionString).then(pool => {	
+	sql.connect(sqlConObj).then(pool => {	
         // Query
      
         return pool.request()
@@ -174,7 +177,7 @@ router.put('/:trackingnumber', function(req, res, next) {
         res.send({error: "Tracking Number Required"});
     }
 
-    sql.connect(config.mssql).then(pool => {
+    sql.connect(sqlConObj).then(pool => {
         // Query
      
         return pool.request()
