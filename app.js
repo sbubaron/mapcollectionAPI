@@ -7,7 +7,13 @@ var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
 var dirtydata = require('./routes/dirtydata');
+var cleaneddata = require('./routes/cleaneddata');
+var mappabledata = require('./routes/mappabledata');
 var users = require('./routes/users');
+
+var cors = require('cors');
+
+
 
 var app = express();
 
@@ -23,8 +29,29 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+var whitelist = ['*'];
+
+var corsOptions = function (req, callback) {
+  var corsOptions;
+  if (whitelist.indexOf(req.header('Origin')) !== -1 || whitelist.indexOf('*') !== -1) {
+    corsOptions = { origin: true } // reflect (enable) the requested origin in the CORS response
+  }else{
+    corsOptions = { origin: false } // disable CORS for this request
+  }
+  callback(null, corsOptions) // callback expects two parameters: error and options
+}
+
+
+
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
 app.use('/', index);
-app.use('/dirtydata', dirtydata);
+app.use('/dirtydata', dirtydata, cors(corsOptions));
+app.use('/cleaneddata', cleaneddata, cors(corsOptions));
+app.use('/mappabledata', mappabledata, cors(corsOptions));
 app.use('/users', users);
 
 //console.log(db);
